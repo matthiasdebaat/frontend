@@ -1,13 +1,14 @@
-import { mdiHelpCircle } from "@mdi/js";
 import { LitElement, css, html, nothing } from "lit";
 import { customElement, property } from "lit/decorators";
 import { fireEvent } from "../../../../common/dom/fire_event";
+import "../../../../components/ha-button";
 import "../../../../components/ha-card";
-import "../../../../components/ha-icon-button";
 import "../../../../components/ha-switch";
 import type { HaSwitch } from "../../../../components/ha-switch";
 import type { CloudStatusLoggedIn } from "../../../../data/cloud";
 import { updateCloudPref } from "../../../../data/cloud";
+import "../../../../layouts/hass-subpage";
+import { haStyle } from "../../../../resources/styles";
 import type { HomeAssistant } from "../../../../types";
 import { showToast } from "../../../../util/toast";
 
@@ -16,6 +17,8 @@ export class CloudICEServersPref extends LitElement {
   @property({ attribute: false }) public hass!: HomeAssistant;
 
   @property({ attribute: false }) public cloudStatus?: CloudStatusLoggedIn;
+
+  @property({ type: Boolean }) public narrow = false;
 
   protected render() {
     if (!this.cloudStatus) {
@@ -26,40 +29,50 @@ export class CloudICEServersPref extends LitElement {
       this.cloudStatus.prefs;
 
     return html`
-      <ha-card
-        outlined
-        header=${this.hass.localize(
+      <hass-subpage
+        .hass=${this.hass}
+        .narrow=${this.narrow}
+        .header=${this.hass.localize(
           "ui.panel.config.cloud.account.ice_servers.title"
         )}
+        back-path="/config/cloud/account"
       >
-        <div class="header-actions">
-          <a
-            href="https://www.nabucasa.com/config/webrtc/"
-            target="_blank"
-            rel="noreferrer"
-            class="icon-link"
-          >
-            <ha-icon-button
-              .label=${this.hass.localize(
-                "ui.panel.config.cloud.account.ice_servers.link_learn_how_it_works"
-              )}
-              .path=${mdiHelpCircle}
-            ></ha-icon-button>
-          </a>
-          <ha-switch
-            .checked=${cloudICEServersEnabled}
-            @change=${this._toggleCloudICEServersEnabledChanged}
-          ></ha-switch>
-        </div>
-
-        <div class="card-content">
-          <p>
-            ${this.hass.localize(
-              "ui.panel.config.cloud.account.ice_servers.info"
+        <div class="content">
+          <ha-card
+            outlined
+            header=${this.hass.localize(
+              "ui.panel.config.cloud.account.ice_servers.title"
             )}
-          </p>
+          >
+            <div class="header-actions">
+              <ha-switch
+                .checked=${cloudICEServersEnabled}
+                @change=${this._toggleCloudICEServersEnabledChanged}
+              ></ha-switch>
+            </div>
+
+            <div class="card-content">
+              <p>
+                ${this.hass.localize(
+                  "ui.panel.config.cloud.account.ice_servers.info"
+                )}
+              </p>
+            </div>
+            <div class="card-actions">
+              <ha-button
+                appearance="plain"
+                href="https://www.nabucasa.com/config/webrtc/"
+                target="_blank"
+                rel="noreferrer"
+              >
+                ${this.hass.localize(
+                  "ui.panel.config.cloud.account.ice_servers.link_learn_more"
+                )}
+              </ha-button>
+            </div>
+          </ha-card>
         </div>
-      </ha-card>
+      </hass-subpage>
     `;
   }
 
@@ -77,28 +90,38 @@ export class CloudICEServersPref extends LitElement {
     }
   }
 
-  static styles = css`
-    a {
-      color: var(--primary-color);
-    }
-    .header-actions {
-      position: absolute;
-      right: 16px;
-      inset-inline-end: 16px;
-      inset-inline-start: initial;
-      top: 24px;
-      display: flex;
-      flex-direction: row;
-    }
-    .header-actions .icon-link {
-      margin-top: -16px;
-      margin-right: 8px;
-      margin-inline-end: 8px;
-      margin-inline-start: initial;
-      direction: var(--direction);
-      color: var(--secondary-text-color);
-    }
-  `;
+  static styles = [
+    haStyle,
+    css`
+      .content {
+        padding: 28px 20px 0;
+        max-width: 1040px;
+        margin: 0 auto;
+      }
+      ha-card {
+        display: block;
+        max-width: 600px;
+        margin: 0 auto;
+        margin-bottom: var(--ha-space-6);
+      }
+      .header-actions {
+        position: absolute;
+        right: var(--ha-space-4);
+        inset-inline-end: var(--ha-space-4);
+        inset-inline-start: initial;
+        top: var(--ha-space-6);
+        display: flex;
+        flex-direction: row;
+      }
+      .card-content p {
+        color: var(--secondary-text-color);
+      }
+      .card-actions {
+        display: flex;
+        justify-content: flex-end;
+      }
+    `,
+  ];
 }
 
 declare global {

@@ -1,16 +1,16 @@
-import { mdiContentCopy } from "@mdi/js";
 import { css, html, LitElement, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators";
 import memoizeOne from "memoize-one";
 import { fireEvent } from "../../../../common/dom/fire_event";
-import { copyToClipboard } from "../../../../common/util/copy-clipboard";
 import "../../../../components/ha-button";
 import "../../../../components/ha-card";
 import "../../../../components/ha-language-picker";
+import "../../../../components/ha-md-list";
+import "../../../../components/ha-md-list-item";
 import "../../../../components/ha-select";
+import "../../../../components/ha-tip";
+import "../../../../components/voice-assistant-brand-icon";
 import type { HaSelectSelectEvent } from "../../../../components/ha-select";
-import "../../../../components/ha-svg-icon";
-import "../../../../components/ha-switch";
 import type { CloudStatusLoggedIn } from "../../../../data/cloud";
 import { updateCloudPref } from "../../../../data/cloud";
 import type { CloudTTSInfo } from "../../../../data/cloud/tts";
@@ -19,8 +19,9 @@ import {
   getCloudTtsLanguages,
 } from "../../../../data/cloud/tts";
 import { showAlertDialog } from "../../../../dialogs/generic/show-dialog-box";
+import "../../../../layouts/hass-subpage";
+import { haStyle } from "../../../../resources/styles";
 import type { HomeAssistant } from "../../../../types";
-import { showToast } from "../../../../util/toast";
 import { showTryTtsDialog } from "./show-dialog-cloud-tts-try";
 
 export const getCloudTtsSupportedVoices = (
@@ -64,71 +65,172 @@ export class CloudTTSPref extends LitElement {
     const voices = this.getSupportedVoices(defaultVoice[0], this.ttsInfo);
 
     return html`
-      <ha-card
-        outlined
-        header=${this.hass.localize("ui.panel.config.cloud.account.tts.title")}
+      <hass-subpage
+        .hass=${this.hass}
+        .narrow=${this.narrow}
+        .header=${this.hass.localize("ui.panel.config.cloud.account.tts.title")}
+        back-path="/config/cloud/account"
       >
-        <div class="card-content">
-          ${this.hass.localize(
-            "ui.panel.config.cloud.account.tts.description",
-            {
-              service: '"tts.cloud_say"',
-            }
-          )}
-          <br /><br />
-          <div class="row">
-            <ha-language-picker
-              .hass=${this.hass}
-              .label=${this.hass.localize(
-                "ui.panel.config.cloud.account.tts.default_language"
-              )}
-              .disabled=${this.savingPreferences}
-              .value=${defaultVoice[0]}
-              .languages=${languages}
-              @value-changed=${this._handleLanguageChange}
-            >
-            </ha-language-picker>
-
-            <ha-select
-              .label=${this.hass.localize(
-                "ui.panel.config.cloud.account.tts.default_voice"
-              )}
-              .disabled=${this.savingPreferences}
-              .value=${defaultVoice[1]}
-              @selected=${this._handleVoiceChange}
-              .options=${voices.map((voice) => ({
-                value: voice.voiceId,
-                label: voice.voiceName,
-              }))}
-            >
-            </ha-select>
-          </div>
-        </div>
-        <div class="card-actions">
-          <div class="voice-id" @click=${this._copyVoiceId}>
-            <div class="label">
+        <div class="content">
+          <ha-card outlined>
+            <div class="card-header">
+              <voice-assistant-brand-icon
+                .hass=${this.hass}
+                .voiceAssistantId=${"conversation"}
+              ></voice-assistant-brand-icon>
               ${this.hass.localize(
-                "ui.components.media-browser.tts.selected_voice_id"
+                "ui.panel.config.cloud.account.assist.card_title"
               )}
             </div>
-            <code>${defaultVoice[1]}</code>
-            ${this.narrow
-              ? nothing
-              : html`
-                  <ha-icon-button
-                    .path=${mdiContentCopy}
-                    title=${this.hass.localize(
-                      "ui.components.media-browser.tts.copy_voice_id"
+            <div class="card-content">
+              <p>
+                ${this.hass.localize(
+                  "ui.panel.config.cloud.account.assist.description"
+                )}
+              </p>
+            </div>
+            <div class="card-actions">
+              <ha-button
+                appearance="plain"
+                href="https://www.home-assistant.io/voice_control/"
+                target="_blank"
+                rel="noreferrer"
+              >
+                ${this.hass.localize(
+                  "ui.panel.config.cloud.account.assist.link_learn_more"
+                )}
+              </ha-button>
+              <ha-button
+                appearance="filled"
+                href="/config/voice-assistants/assistants"
+              >
+                ${this.hass.localize(
+                  "ui.panel.config.cloud.account.assist.configure"
+                )}
+              </ha-button>
+            </div>
+          </ha-card>
+          <ha-card
+            outlined
+            header=${this.hass.localize(
+              "ui.panel.config.cloud.account.tts.card_title"
+            )}
+          >
+            <div class="card-content">
+              <ha-md-list>
+                <ha-md-list-item>
+                  <span slot="headline">
+                    ${this.hass.localize(
+                      "ui.panel.config.cloud.account.tts.default_language"
                     )}
-                  ></ha-icon-button>
-                `}
-          </div>
-          <div class="flex"></div>
-          <ha-button appearance="plain" @click=${this._openTryDialog}>
-            ${this.hass.localize("ui.panel.config.cloud.account.tts.try")}
-          </ha-button>
+                  </span>
+                  <span slot="supporting-text">
+                    ${this.hass.localize(
+                      "ui.panel.config.cloud.account.tts.default_language_description"
+                    )}
+                  </span>
+                  <ha-language-picker
+                    slot="end"
+                    .hass=${this.hass}
+                    .label=${""}
+                    .disabled=${this.savingPreferences}
+                    .value=${defaultVoice[0]}
+                    .languages=${languages}
+                    noClearButton
+                    @value-changed=${this._handleLanguageChange}
+                  >
+                  </ha-language-picker>
+                </ha-md-list-item>
+                <ha-md-list-item>
+                  <span slot="headline">
+                    ${this.hass.localize(
+                      "ui.panel.config.cloud.account.tts.default_voice"
+                    )}
+                  </span>
+                  <span slot="supporting-text">
+                    ${this.hass.localize(
+                      "ui.panel.config.cloud.account.tts.default_voice_description"
+                    )}
+                  </span>
+                  <ha-select
+                    slot="end"
+                    .disabled=${this.savingPreferences}
+                    .value=${defaultVoice[1]}
+                    @selected=${this._handleVoiceChange}
+                    .options=${voices.map((voice) => ({
+                      value: voice.voiceId,
+                      label: voice.voiceName,
+                    }))}
+                  >
+                  </ha-select>
+                </ha-md-list-item>
+                <ha-md-list-item>
+                  <span slot="headline">
+                    ${this.hass.localize(
+                      "ui.panel.config.cloud.account.tts.try"
+                    )}
+                  </span>
+                  <span slot="supporting-text">
+                    ${this.hass.localize(
+                      "ui.panel.config.cloud.account.tts.try_description"
+                    )}
+                  </span>
+                  <ha-button
+                    slot="end"
+                    appearance="filled"
+                    @click=${this._openTryDialog}
+                  >
+                    ${this.hass.localize(
+                      "ui.panel.config.cloud.account.tts.try"
+                    )}
+                  </ha-button>
+                </ha-md-list-item>
+              </ha-md-list>
+            </div>
+            <div class="card-actions">
+              <ha-button
+                appearance="plain"
+                href="https://support.nabucasa.com/hc/en-us/articles/25619386304541"
+                target="_blank"
+                rel="noreferrer"
+              >
+                ${this.hass.localize(
+                  "ui.panel.config.cloud.account.tts.link_learn_more"
+                )}
+              </ha-button>
+            </div>
+          </ha-card>
+          <ha-card
+            outlined
+            header=${this.hass.localize(
+              "ui.panel.config.cloud.account.stt.card_title"
+            )}
+          >
+            <div class="card-content">
+              <p>
+                ${this.hass.localize(
+                  "ui.panel.config.cloud.account.stt.description"
+                )}
+              </p>
+            </div>
+            <div class="card-actions">
+              <ha-button
+                appearance="plain"
+                href="https://support.nabucasa.com/hc/en-us/articles/29718084245149"
+                target="_blank"
+                rel="noreferrer"
+              >
+                ${this.hass.localize(
+                  "ui.panel.config.cloud.account.stt.link_learn_more"
+                )}
+              </ha-button>
+            </div>
+          </ha-card>
+          <ha-tip .hass=${this.hass}>
+            ${this.hass.localize("ui.panel.config.cloud.account.tts.tip")}
+          </ha-tip>
         </div>
-      </ha-card>
+      </hass-subpage>
     `;
   }
 
@@ -207,74 +309,66 @@ export class CloudTTSPref extends LitElement {
     }
   }
 
-  private async _copyVoiceId(ev) {
-    ev.preventDefault();
-    await copyToClipboard(this.cloudStatus!.prefs.tts_default_voice[1]);
-    showToast(this, {
-      message: this.hass.localize("ui.common.copied_clipboard"),
-    });
-  }
-
-  static styles = css`
-    a {
-      color: var(--primary-color);
-    }
-    .example {
-      position: absolute;
-      right: 16px;
-      inset-inline-end: 16px;
-      inset-inline-start: initial;
-      top: 16px;
-    }
-    .row {
-      display: flex;
-    }
-    .row > * {
-      flex: 1;
-      width: 0;
-    }
-    .row > *:first-child {
-      margin-right: 8px;
-      margin-inline-end: 8px;
-      margin-inline-start: initial;
-    }
-    .row > *:last-child {
-      margin-left: 8px;
-      margin-inline-start: 8px;
-      margin-inline-end: initial;
-    }
-    .card-actions {
-      display: flex;
-      align-items: center;
-    }
-    code {
-      margin-left: 6px;
-      font-weight: var(--ha-font-weight-bold);
-    }
-    .voice-id {
-      display: flex;
-      align-items: center;
-      font-size: var(--ha-font-size-s);
-      color: var(--secondary-text-color);
-      --mdc-icon-size: 14px;
-      --mdc-icon-button-size: 24px;
-    }
-    :host([narrow]) .voice-id {
-      flex-direction: column;
-      font-size: var(--ha-font-size-xs);
-      align-items: start;
-      align-items: left;
-    }
-    :host([narrow]) .label {
-      text-transform: uppercase;
-    }
-    :host([narrow]) code {
-      margin-left: 0;
-    }
-    .flex {
-      flex: 1;
-    }
-  `;
+  static styles = [
+    haStyle,
+    css`
+      .content {
+        padding: 28px 20px 0;
+        max-width: 1040px;
+        margin: 0 auto;
+      }
+      ha-card {
+        display: block;
+        max-width: 600px;
+        margin: 0 auto;
+        margin-bottom: var(--ha-space-6);
+      }
+      a {
+        color: var(--primary-color);
+      }
+      .card-header {
+        display: flex;
+        align-items: center;
+        gap: var(--ha-space-3);
+      }
+      .card-content {
+        padding-left: 0;
+        padding-right: 0;
+      }
+      .card-content p {
+        color: var(--secondary-text-color);
+        padding-inline: var(--ha-space-4);
+        margin: 0;
+      }
+      ha-md-list {
+        background: none;
+        --md-list-item-leading-space: var(--ha-space-4);
+        --md-list-item-trailing-space: var(--ha-space-4);
+      }
+      ha-md-list-item {
+        --md-item-overflow: visible;
+      }
+      ha-language-picker,
+      ha-select {
+        min-width: 210px;
+      }
+      @media all and (max-width: 450px) {
+        ha-language-picker,
+        ha-select {
+          min-width: 160px;
+          width: 160px;
+        }
+      }
+      .card-actions {
+        display: flex;
+        justify-content: space-between;
+      }
+      ha-tip {
+        max-width: 600px;
+        margin: 0 auto;
+      }
+    `,
+  ];
 }
 
 declare global {

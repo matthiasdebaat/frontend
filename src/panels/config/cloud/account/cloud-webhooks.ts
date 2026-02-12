@@ -11,6 +11,7 @@ import type { CloudStatusLoggedIn, CloudWebhook } from "../../../../data/cloud";
 import { createCloudhook, deleteCloudhook } from "../../../../data/cloud";
 import type { Webhook, WebhookError } from "../../../../data/webhook";
 import { fetchWebhooks } from "../../../../data/webhook";
+import "../../../../layouts/hass-subpage";
 import { haStyle } from "../../../../resources/styles";
 import type { HomeAssistant } from "../../../../types";
 import { showManageCloudhookDialog } from "../dialog-manage-cloudhook/show-dialog-manage-cloudhook";
@@ -36,92 +37,108 @@ export class CloudWebhooks extends LitElement {
 
   protected render() {
     return html`
-      <ha-card
-        outlined
-        header=${this.hass!.localize(
+      <hass-subpage
+        .hass=${this.hass}
+        .narrow=${this.narrow}
+        .header=${this.hass!.localize(
           "ui.panel.config.cloud.account.webhooks.title"
         )}
+        back-path="/config/cloud/account"
       >
-        <div class="card-content">
-          ${this.hass!.localize("ui.panel.config.cloud.account.webhooks.info")}
-          ${!this.cloudStatus ||
-          !this._localHooks ||
-          !this._cloudHooks ||
-          !this.hass
-            ? html`
-                <div class="body-text">
-                  ${this.hass!.localize(
-                    "ui.panel.config.cloud.account.webhooks.loading"
-                  )}
-                </div>
-              `
-            : this._localHooks.length === 0
-              ? html`
-                  <div class="body-text">
-                    ${this.hass.localize(
-                      "ui.panel.config.cloud.account.webhooks.no_hooks_yet"
-                    )}
-                    <a href="/config/integrations"
-                      >${this.hass.localize(
-                        "ui.panel.config.cloud.account.webhooks.no_hooks_yet_link_integration"
-                      )}
-                    </a>
-                    ${this.hass.localize(
-                      "ui.panel.config.cloud.account.webhooks.no_hooks_yet2"
-                    )}
-                    <a href="/config/automation/edit/new"
-                      >${this.hass.localize(
-                        "ui.panel.config.cloud.account.webhooks.no_hooks_yet_link_automation"
-                      )}</a
-                    >.
-                  </div>
-                `
-              : this._localHooks.map(
-                  (entry) => html`
-                    <ha-settings-row .narrow=${this.narrow} .entry=${entry}>
-                      <span slot="heading">
-                        ${entry.name}
-                        ${entry.domain !== entry.name.toLowerCase()
-                          ? ` (${entry.domain})`
-                          : ""}
-                      </span>
-                      <span slot="description">${entry.webhook_id}</span>
-                      ${this._progress.includes(entry.webhook_id)
-                        ? html`
-                            <div class="progress">
-                              <ha-spinner></ha-spinner>
-                            </div>
-                          `
-                        : this._cloudHooks![entry.webhook_id]
-                          ? html`
-                              <ha-button
-                                appearance="plain"
-                                size="small"
-                                @click=${this._handleManageButton}
-                              >
-                                ${this.hass!.localize(
-                                  "ui.panel.config.cloud.account.webhooks.manage"
-                                )}
-                              </ha-button>
-                            `
-                          : html`<ha-switch @click=${this._enableWebhook}>
-                            </ha-switch>`}
-                    </ha-settings-row>
-                  `
+        <div class="content">
+          <ha-card
+            outlined
+            header=${this.hass!.localize(
+              "ui.panel.config.cloud.account.webhooks.title"
+            )}
+          >
+            <div class="card-content">
+              <p>
+                ${this.hass!.localize(
+                  "ui.panel.config.cloud.account.webhooks.info"
                 )}
-          <div class="footer">
-            <a
-              href="https://www.nabucasa.com/config/webhooks"
-              target="_blank"
-              rel="noreferrer"
-            >
-              ${this.hass!.localize(
-                "ui.panel.config.cloud.account.webhooks.link_learn_more"
-              )}
-            </a>
-          </div>
+              </p>
+              ${!this.cloudStatus ||
+              !this._localHooks ||
+              !this._cloudHooks ||
+              !this.hass
+                ? html`
+                    <div class="body-text">
+                      ${this.hass!.localize(
+                        "ui.panel.config.cloud.account.webhooks.loading"
+                      )}
+                    </div>
+                  `
+                : this._localHooks.length === 0
+                  ? html`
+                      <div class="body-text">
+                        ${this.hass.localize(
+                          "ui.panel.config.cloud.account.webhooks.no_hooks_yet"
+                        )}
+                        <a href="/config/integrations"
+                          >${this.hass.localize(
+                            "ui.panel.config.cloud.account.webhooks.no_hooks_yet_link_integration"
+                          )}
+                        </a>
+                        ${this.hass.localize(
+                          "ui.panel.config.cloud.account.webhooks.no_hooks_yet2"
+                        )}
+                        <a href="/config/automation/edit/new"
+                          >${this.hass.localize(
+                            "ui.panel.config.cloud.account.webhooks.no_hooks_yet_link_automation"
+                          )}</a
+                        >.
+                      </div>
+                    `
+                  : this._localHooks.map(
+                      (entry) => html`
+                        <ha-settings-row .narrow=${this.narrow} .entry=${entry}>
+                          <span slot="heading">
+                            ${entry.name}
+                            ${entry.domain !== entry.name.toLowerCase()
+                              ? ` (${entry.domain})`
+                              : ""}
+                          </span>
+                          <span slot="description">${entry.webhook_id}</span>
+                          ${this._progress.includes(entry.webhook_id)
+                            ? html`
+                                <div class="progress">
+                                  <ha-spinner></ha-spinner>
+                                </div>
+                              `
+                            : this._cloudHooks![entry.webhook_id]
+                              ? html`
+                                  <ha-button
+                                    appearance="plain"
+                                    size="small"
+                                    @click=${this._handleManageButton}
+                                  >
+                                    ${this.hass!.localize(
+                                      "ui.panel.config.cloud.account.webhooks.manage"
+                                    )}
+                                  </ha-button>
+                                `
+                              : html`<ha-switch @click=${this._enableWebhook}>
+                                </ha-switch>`}
+                        </ha-settings-row>
+                      `
+                    )}
+            </div>
+            <div class="card-actions">
+              <ha-button
+                appearance="plain"
+                href="https://www.nabucasa.com/config/webhooks"
+                target="_blank"
+                rel="noreferrer"
+              >
+                ${this.hass!.localize(
+                  "ui.panel.config.cloud.account.webhooks.link_learn_more"
+                )}
+              </ha-button>
+            </div>
+          </ha-card>
         </div>
-      </ha-card>
+      </hass-subpage>
     `;
   }
 
@@ -213,27 +230,41 @@ export class CloudWebhooks extends LitElement {
     return [
       haStyle,
       css`
+        .content {
+          padding: 28px 20px 0;
+          max-width: 1040px;
+          margin: 0 auto;
+        }
+        ha-card {
+          display: block;
+          max-width: 600px;
+          margin: 0 auto;
+          margin-bottom: var(--ha-space-6);
+        }
+        .card-content p {
+          color: var(--secondary-text-color);
+        }
         .body-text {
-          padding: 8px 0;
+          padding: var(--ha-space-2) 0;
         }
         .webhook {
           display: flex;
           padding: 4px 0;
         }
         .progress {
-          margin-right: 16px;
-          margin-inline-end: 16px;
+          margin-right: var(--ha-space-4);
+          margin-inline-end: var(--ha-space-4);
           margin-inline-start: initial;
           display: flex;
           flex-direction: column;
           justify-content: center;
         }
-        .footer {
-          padding-top: 16px;
-        }
-        .body-text a,
-        .footer a {
+        .body-text a {
           color: var(--primary-color);
+        }
+        .card-actions {
+          display: flex;
+          justify-content: flex-end;
         }
         ha-settings-row {
           padding: 0;

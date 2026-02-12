@@ -418,7 +418,9 @@
       "duplicate": "Duplicate",
       "remove": "Remove",
       "enable": "Enable",
+      "enabled": "Enabled",
       "disable": "Disable",
+      "disabled": "Disabled",
       "update": "Update",
       "hide": "Hide",
       "close": "Close",
@@ -5894,27 +5896,42 @@
             "reset_data_confirm_text": "This will reset all your cloud settings. This includes your remote connection, Google Assistant, and Amazon Alexa integrations. This action cannot be undone.",
             "reset": "Reset",
             "reset_data_failed": "Failed to reset cloud data",
-            "thank_you_note": "Thank you for being part of Home Assistant Cloud. It's because of people like you that we are able to make a great home automation experience for everyone. Thank you!",
-            "nabu_casa_account": "Nabu Casa account",
+            "thank_you_title": "Thank you!",
+            "thank_you_note": "It's because of people like you that we are able to make a great home automation experience for everyone.",
             "connection_status": "Cloud connection status",
             "manage_account": "Manage account",
             "sign_out": "Sign out",
             "sign_out_confirm": "Are you sure you want to sign out?",
-            "integrations": "Integrations",
-            "integrations_introduction": "Integrations for Home Assistant Cloud allow you to connect with services in the cloud without having to expose your Home Assistant instance publicly on the internet.",
-            "integrations_introduction2": "Check the website for ",
-            "integrations_link_all_features": " all available features",
+            "renews_on": "Renews on {date}",
+            "getting_renewal_date": "Getting renewal date…",
+            "features": {
+              "title": "Extras by Nabu Casa",
+              "introduction": "The best extras for Home Assistant while supporting its development. Securely access Home Assistant anywhere, connect voice assistants, and much more. Made by the team driving the development of Home Assistant."
+            },
             "tip_moved_voice_assistants": "Looking for Google Assistant and Amazon Alexa settings? They are moved to the new voice assistants page.",
             "connected": "Connected",
             "connecting": "Connecting…",
             "not_connected": "Not connected",
             "fetching_subscription": "Fetching subscription…",
+            "assist": {
+              "card_title": "Assist",
+              "description": "Assist allows you to control Home Assistant using natural language. It is built on top of an open voice foundation and powered by knowledge provided by our community.",
+              "link_learn_more": "Learn more",
+              "configure": "Configure"
+            },
             "tts": {
-              "title": "Text-to-speech",
-              "description": "Bring personality to your home by having it speak to you by using our text-to-speech services. You can use this in automations and scripts by using the {service} action.",
+              "title": "Voice control",
+              "card_title": "Text-to-speech",
+              "description": "Bring personality to your home by having it speak to you by using our text-to-speech services.",
+              "tip": "You can use text-to-speech in automations and scripts by using the \"tts.cloud_say\" action.",
               "default_language": "Default language to use",
+              "default_language_description": "Select the language for text-to-speech output.",
               "default_voice": "Default voice to use",
-              "try": "Try",
+              "default_voice_description": "Choose a voice for the selected language.",
+              "voices_count": "{count} {language} {count, plural,\n  one {voice}\n  other {voices}\n}",
+              "try": "Try text-to-speech",
+              "try_description": "Test the selected voice on a media player.",
+              "link_learn_more": "Learn more",
               "dialog": {
                 "header": "Try text-to-speech",
                 "message": "Message",
@@ -5925,8 +5942,28 @@
                 "create_automation": "Create automation"
               }
             },
+            "stt": {
+              "card_title": "Speech-to-text",
+              "description": "Convert spoken language into text using our speech-to-text services. This is used by Assist to understand your voice commands.",
+              "link_learn_more": "Learn more"
+            },
+            "google_alexa": {
+              "title": "Google & Alexa integration",
+              "configure": "Configure",
+              "google": {
+                "card_title": "Google Assistant",
+                "description": "The Google Assistant integration allows users to control Home Assistant entities from Google Home. You can then say things like \"Ok Google, turn on the kitchen light\" to control your local Home Assistant.",
+                "link_learn_more": "Learn more"
+              },
+              "alexa": {
+                "card_title": "Alexa",
+                "description": "The Alexa integration allows you to control the Home Assistant entities via the Home Assistant Smart Home skill for Amazon Alexa. You can then say things like \"Alexa, turn on the kitchen light\" to control your local Home Assistant.",
+                "link_learn_more": "Learn more"
+              }
+            },
             "remote": {
               "title": "Remote access",
+              "card_title": "Remote connection",
               "connected": "Connected",
               "not_connected": "Not connected",
               "reconnecting": "Not connected. Trying to reconnect.",
@@ -5934,9 +5971,9 @@
               "cerificate_loading": "Your certificate is loading.",
               "cerificate_loaded": "Your certificate is loaded, waiting for validation.",
               "cerificate_error": "There was an error generating the certificate, check your logs.",
-              "info": "Home Assistant Cloud provides secure remote access to your instance while away from home. For more information on remote access and these settings, visit our security documentation.",
+              "info": "Home Assistant Cloud provides secure remote access that allows you to connect to your Home Assistant instance from outside of your home network. So that you can start the vacuum cleaner from your phone while you are on the train for your daily commute, for example.",
               "info_instance_will_be_available": "Your instance will be available at your Nabu Casa URL.",
-              "link_learn_how_it_works": "Learn how it works",
+              "link_learn_how_it_works": "Learn more",
               "security_options": "Security options",
               "external_activation": "Allow external activation of remote access",
               "external_activation_secondary": "If you disable remote access on this page, having this setting enabled allows you to reactivate it remotely via your Nabu Casa account.",
@@ -5944,12 +5981,14 @@
               "drop_connection_warning": "The below security options may make it appear the system is not running.",
               "certificate_info": "Certificate information",
               "certificate_expire": "Certificate renewal at {date}",
-              "more_info": "More details"
+              "more_info": "More details",
+              "tip_custom_domain": "Want to use your own domain name?",
+              "tip_custom_domain_link": "Learn how to set up a custom domain."
             },
             "ice_servers": {
               "title": "WebRTC connections",
               "info": "Home Assistant Cloud provides WebRTC servers. This improves your ability to view your camera streams when you are away from home.",
-              "link_learn_how_it_works": "Learn how it works"
+              "link_learn_more": "Learn more"
             },
             "alexa": {
               "title": "Alexa",
@@ -5999,10 +6038,35 @@
               "no_hooks_yet_link_integration": "webhook-based integration",
               "no_hooks_yet2": " or by creating a ",
               "no_hooks_yet_link_automation": "webhook automation",
-              "link_learn_more": "Learn more about creating webhook-powered automations.",
+              "link_learn_more": "Learn more",
               "loading": "Loading…",
               "manage": "Manage",
+              "active_count": "{count} {count, plural,\n  one {active}\n  other {active}\n}",
               "disable_hook_error_msg": "Failed to disable webhook:"
+            },
+            "backup": {
+              "title": "Cloud backup",
+              "card_title": "About Cloud backup",
+              "last_backup": "Last backup {relative_time}",
+              "loading": "Last backup …",
+              "no_backups": "No backups",
+              "cloud_info": "You have the option to store an encrypted Home Assistant backup on Home Assistant Cloud. This is included in your subscription at no extra cost.",
+              "cloud_info_one_backup": "One encrypted backup is stored in the cloud. When a new backup is created, the older version is automatically deleted.",
+              "cloud_info_size_limit": "The maximum backup size is 5 GB. If the backup exceeds this limit, you will receive a notification.",
+              "cloud_info_encrypted": "Backups stored in the cloud are always encrypted. The encryption key is included in the emergency kit.",
+              "cloud_info_no_access": "Nabu Casa has no access to your data or encryption key.",
+              "link_learn_more": "Learn more",
+              "configure": "Configure",
+              "set_up": "Set up",
+              "status_card_title": "My backup",
+              "last_cloud_backup": "Last backup {relative_time}",
+              "no_cloud_backups": "No backups uploaded yet",
+              "backup_encrypted": "Encrypted",
+              "backup_not_encrypted": "Not encrypted",
+              "next_backup": "Next backup {relative_time}",
+              "no_next_backup": "No automatic backup scheduled",
+              "setup_card_title": "Set up Cloud backup",
+              "setup_info": "You haven't set up automatic backups to the cloud yet. Configure automatic backups to keep your Home Assistant safe."
             }
           },
           "dialog_certificate": {
