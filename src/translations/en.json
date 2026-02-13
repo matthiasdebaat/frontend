@@ -5949,6 +5949,7 @@
             },
             "google_alexa": {
               "title": "Google & Alexa integration",
+              "description": "Control your home with Google Assistant and Alexa",
               "configure": "Configure",
               "google": {
                 "card_title": "Google Assistant",
@@ -5987,6 +5988,7 @@
             },
             "ice_servers": {
               "title": "WebRTC connections",
+              "description": "Improved camera streaming when away from home",
               "info": "Home Assistant Cloud provides WebRTC servers. This improves your ability to view your camera streams when you are away from home.",
               "link_learn_more": "Learn more"
             },

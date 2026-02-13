@@ -261,7 +261,13 @@ export class CloudAccount extends SubscribeMixin(LitElement) {
                       "ui.panel.config.cloud.account.remote.title"
                     )}
                   </div>
-                  <div slot="supporting-text">
+                  <div slot="supporting-text" class="status-line">
+                    <span
+                      class="status-dot ${this.cloudStatus.prefs
+                        .remote_enabled
+                        ? "enabled"
+                        : "disabled"}"
+                    ></span>
                     ${this.cloudStatus.prefs.remote_enabled
                       ? this.hass.localize("ui.common.enabled")
                       : this.hass.localize("ui.common.disabled")}
@@ -344,10 +350,9 @@ export class CloudAccount extends SubscribeMixin(LitElement) {
                     )}
                   </div>
                   <div slot="supporting-text">
-                    ${this.cloudStatus.google_registered ||
-                    this.cloudStatus.alexa_registered
-                      ? this.hass.localize("ui.common.enabled")
-                      : this.hass.localize("ui.common.disabled")}
+                    ${this.hass.localize(
+                      "ui.panel.config.cloud.account.google_alexa.description"
+                    )}
                   </div>
                   <ha-icon-next slot="end"></ha-icon-next>
                 </ha-md-list-item>
@@ -360,9 +365,9 @@ export class CloudAccount extends SubscribeMixin(LitElement) {
                     )}
                   </div>
                   <div slot="supporting-text">
-                    ${this.cloudStatus.prefs.cloud_ice_servers_enabled
-                      ? this.hass.localize("ui.common.enabled")
-                      : this.hass.localize("ui.common.disabled")}
+                    ${this.hass.localize(
+                      "ui.panel.config.cloud.account.ice_servers.description"
+                    )}
                   </div>
                   <ha-icon-next slot="end"></ha-icon-next>
                 </ha-md-list-item>
@@ -600,6 +605,23 @@ export class CloudAccount extends SubscribeMixin(LitElement) {
           --md-list-item-top-space: 8px;
           --md-list-item-bottom-space: 8px;
           --md-list-item-one-line-container-height: 40px;
+        }
+        .status-line {
+          display: flex;
+          align-items: center;
+        }
+        .status-dot {
+          flex-shrink: 0;
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+          margin-inline-end: var(--ha-space-1);
+        }
+        .status-dot.enabled {
+          background-color: var(--success-color);
+        }
+        .status-dot.disabled {
+          background-color: var(--error-color);
         }
         ha-icon-next,
         ha-svg-icon[slot="start"] {
